@@ -381,7 +381,7 @@ class AlpacaCrypto(DataSource):
         df = df[df["exchange"] == self.exchange]
         df = df.reset_index()
         df.rename(columns={"timestamp": DataCol.DATE.value}, inplace=True)
-        df = df[[col for col in self.COLUMNS]]
+        df = df[list(self.COLUMNS)]
         df[DataCol.DATE.value] = pd.to_datetime(df[DataCol.DATE.value])
         df[DataCol.DATE.value] = df[DataCol.DATE.value].dt.tz_convert(
             self.__EST

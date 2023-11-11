@@ -652,10 +652,7 @@ class TestBacktestMixin:
         def buy_exec_fn(ctx):
             ctx.buy_fill_price = PriceType.CLOSE
             ctx.buy_shares = 200
-            if ctx.symbol == "SPY":
-                ctx.score = 1
-            else:
-                ctx.score = 0
+            ctx.score = 1 if ctx.symbol == "SPY" else 0
 
         exec = Execution(
             id=1,
@@ -702,10 +699,7 @@ class TestBacktestMixin:
         def sell_exec_fn(ctx):
             ctx.sell_fill_price = PriceType.CLOSE
             ctx.sell_shares = 200
-            if ctx.symbol == "AAPL":
-                ctx.score = 1
-            else:
-                ctx.score = 0
+            ctx.score = 1 if ctx.symbol == "AAPL" else 0
 
         exec = Execution(
             id=1,
@@ -1200,8 +1194,7 @@ class TestStrategy:
             dates.update(df["date"].values)
         assert result.start_date == to_datetime(START_DATE)
         assert result.end_date == to_datetime(END_DATE)
-        dates_list = list(dates)
-        dates_list.sort()
+        dates_list = sorted(dates)
         assert np.array_equal(result.portfolio.index, dates_list)
         assert np.array_equal(
             result.positions.index.get_level_values(1).unique(), dates_list[1:]

@@ -194,10 +194,7 @@ def profit_factor(
     numer = denom = 1.0e-10
     numer += np.sum(wins)
     denom -= np.sum(losses)
-    if use_log:
-        return np.log(numer / denom)
-    else:
-        return np.divide(numer, denom)
+    return np.log(numer / denom) if use_log else np.divide(numer, denom)
 
 
 @njit
@@ -222,9 +219,7 @@ def sharpe_ratio(changes: NDArray[np.float_]) -> np.floating:
     if not len(changes):
         return np.float32(0)
     std = np.std(changes)
-    if std == 0:
-        return np.float32(0)
-    return np.mean(changes) / std
+    return np.float32(0) if std == 0 else np.mean(changes) / std
 
 
 def conf_profit_factor(
@@ -470,12 +465,10 @@ def win_loss_rate(pnls: NDArray[np.float_]) -> tuple[float, float]:
         ``tuple[float, float]`` of win rate and loss rate.
     """
     pnls = pnls[pnls != 0]
-    n = len(pnls)
-    if not n:
+    if n := len(pnls):
+        return len(pnls[pnls > 0]) / n * 100, len(pnls[pnls < 0]) / n * 100
+    else:
         return 0, 0
-    win_rate = len(pnls[pnls > 0]) / n * 100
-    loss_rate = len(pnls[pnls < 0]) / n * 100
-    return win_rate, loss_rate
 
 
 def winning_losing_trades(pnls: NDArray[np.float_]) -> tuple[int, int]:
@@ -488,9 +481,7 @@ def winning_losing_trades(pnls: NDArray[np.float_]) -> tuple[int, int]:
         ``tuple[int, int]`` containing numbers of winning and losing trades.
     """
     pnls = pnls[pnls != 0]
-    if not len(pnls):
-        return 0, 0
-    return len(pnls[pnls > 0]), len(pnls[pnls < 0])
+    return (0, 0) if not len(pnls) else (len(pnls[pnls > 0]), len(pnls[pnls < 0]))
 
 
 def total_profit_loss(pnls: NDArray[np.float_]) -> tuple[float, float]:
@@ -582,9 +573,7 @@ def r_squared(values: NDArray[np.float_]) -> float:
         y_hat = np.mean(values)
         ssres = np.sum((values - pred) ** 2)
         sstot = np.sum((values - y_hat) ** 2)
-        if sstot == 0:
-            return 0
-        return 1 - ssres / sstot
+        return 0 if sstot == 0 else 1 - ssres / sstot
     except Exception:
         return 0
 

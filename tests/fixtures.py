@@ -78,8 +78,7 @@ def dates(data_source_df):
 
 @pytest.fixture()
 def scope():
-    scope = StaticScope.instance()
-    yield scope
+    yield StaticScope.instance()
     StaticScope.__instance = None
 
 

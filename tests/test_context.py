@@ -351,11 +351,11 @@ def test_positions_with_symbol(ctx_with_pos, pos_type, foreign):
     positions = list(ctx_with_pos.positions(foreign, pos_type))
     if pos_type is None:
         assert len(positions) == 2
-        assert positions[0].symbol == foreign
         assert positions[1].symbol == foreign
     else:
         assert len(positions) == 1
-        assert positions[0].symbol == foreign
+
+    assert positions[0].symbol == foreign
 
 
 @pytest.mark.parametrize("pos_type", ["long", "short", None])

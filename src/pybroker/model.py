@@ -235,7 +235,7 @@ def model(
     """
     scope = StaticScope.instance()
     indicator_names = (
-        tuple(sorted(set(ind.name for ind in indicators)))
+        tuple(sorted({ind.name for ind in indicators}))
         if indicators is not None
         else tuple()
     )

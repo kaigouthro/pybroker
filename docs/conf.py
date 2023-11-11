@@ -37,9 +37,9 @@ add_module_names = False
 autosummary_generate = True
 keep_warnings = False
 
-python_version = ".".join(map(str, sys.version_info[0:2]))
+python_version = ".".join(map(str, sys.version_info[:2]))
 intersphinx_mapping = {
-    "python": ("https://docs.python.org/" + python_version, None),
+    "python": (f"https://docs.python.org/{python_version}", None),
     "numpy": ("https://numpy.org/doc/stable/", None),
     "pandas": ("https://pandas.pydata.org/docs/", None),
     "diskcache": ("https://grantjenks.com/docs/diskcache/", None),

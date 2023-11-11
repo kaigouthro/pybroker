@@ -124,20 +124,14 @@ class StaticScope:
     def register_custom_cols(self, names: Union[str, Iterable[str]], *args):
         """Registers user-defined column names."""
         self._verify_unfrozen_cols()
-        if type(names) == str:
-            names = (names, *args)
-        else:
-            names = (*names, *args)
+        names = (names, *args) if type(names) == str else (*names, *args)
         names = filter(lambda col: col not in self.default_data_cols, names)
         self.custom_data_cols.update(names)
 
     def unregister_custom_cols(self, names: Union[str, Iterable[str]], *args):
         """Unregisters user-defined column names."""
         self._verify_unfrozen_cols()
-        if type(names) == str:
-            names = (names, *args)
-        else:
-            names = (*names, *args)
+        names = (names, *args) if type(names) == str else (*names, *args)
         self.custom_data_cols.difference_update(names)
 
     @property

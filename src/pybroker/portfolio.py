@@ -430,17 +430,17 @@ class Portfolio:
         bought_shares = self._buy(
             date, symbol, covered.rem_shares, fill_price, limit_price
         )
-        if not covered.filled_shares and not bought_shares:
+        if covered.filled_shares or bought_shares:
+            return self._add_order(
+                date=date,
+                symbol=symbol,
+                type="buy",
+                limit_price=limit_price,
+                fill_price=fill_price,
+                shares=covered.filled_shares + bought_shares,
+            )
+        else:
             return None
-        order = self._add_order(
-            date=date,
-            symbol=symbol,
-            type="buy",
-            limit_price=limit_price,
-            fill_price=fill_price,
-            shares=covered.filled_shares + bought_shares,
-        )
-        return order
 
     def _cover(
         self,
@@ -597,17 +597,17 @@ class Portfolio:
             return None
         sold = self._sell_existing(date, symbol, shares, fill_price)
         short_shares = self._short(date, symbol, sold.rem_shares, fill_price)
-        if not sold.filled_shares and not short_shares:
+        if sold.filled_shares or short_shares:
+            return self._add_order(
+                date=date,
+                symbol=symbol,
+                type="sell",
+                limit_price=limit_price,
+                fill_price=fill_price,
+                shares=sold.filled_shares + short_shares,
+            )
+        else:
             return None
-        order = self._add_order(
-            date=date,
-            symbol=symbol,
-            type="sell",
-            limit_price=limit_price,
-            fill_price=fill_price,
-            shares=sold.filled_shares + short_shares,
-        )
-        return order
 
     def _sell_existing(
         self,

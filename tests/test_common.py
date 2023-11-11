@@ -204,7 +204,6 @@ def test_verify_data_source_columns():
         columns=["symbol", "date", "open", "high", "low", "close"]
     )
     verify_data_source_columns(df)
-    assert True
 
 
 def test_verify_date_range_when_invalid_then_error():

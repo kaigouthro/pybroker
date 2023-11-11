@@ -307,11 +307,9 @@ def verify_data_source_columns(df: pd.DataFrame):
         DataCol.LOW,
         DataCol.CLOSE,
     )
-    missing = []
-    for col in required_cols:
-        if col.value not in df.columns:
-            missing.append(col.value)
-    if missing:
+    if missing := [
+        col.value for col in required_cols if col.value not in df.columns
+    ]:
         raise ValueError(f"DataFrame is missing required columns: {missing!r}")
 
 

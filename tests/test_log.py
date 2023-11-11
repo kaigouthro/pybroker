@@ -21,9 +21,9 @@ from pybroker.log import Logger
 
 
 class TestLogger:
-    def test_enable_and_disable(scope, capsys, caplog):
+    def test_enable_and_disable(self, capsys, caplog):
         caplog.set_level(logging.DEBUG)
-        logger = Logger(scope)
+        logger = Logger(self)
         logger.disable()
         logger.indicator_data_start([])
         logger.info_indicator_data_start([])
@@ -43,8 +43,8 @@ class TestLogger:
         assert captured.err == ""
         assert len(caplog.record_tuples) == 3
 
-    def test_enable_and_disable_progress_bar(scope, capsys):
-        logger = Logger(scope)
+    def test_enable_and_disable_progress_bar(self, capsys):
+        logger = Logger(self)
         logger.disable_progress_bar()
         logger._start_progress_bar("start", 10)
         logger._update_progress_bar(1)

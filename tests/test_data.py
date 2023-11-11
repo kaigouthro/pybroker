@@ -280,22 +280,20 @@ class TestAlpaca:
         mock_bars = mock.Mock()
         mock_bars.df = bars_df[bars_df["symbol"].isin(symbols[:-1])]
         with mock.patch.object(
-            alpaca._api, "get_bars", return_value=mock_bars
-        ):
+                alpaca._api, "get_bars", return_value=mock_bars
+            ):
             df = alpaca.query(symbols, START_DATE, END_DATE, TIMEFRAME)
             assert not df.empty
-            assert set(df.columns) == set(
-                (
-                    "date",
-                    "open",
-                    "high",
-                    "low",
-                    "close",
-                    "volume",
-                    "symbol",
-                    "vwap",
-                )
-            )
+            assert set(df.columns) == {
+                "date",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "symbol",
+                "vwap",
+            }
 
     @pytest.mark.usefixtures("setup_ds_cache", "mock_alpaca")
     def test_query_when_cached(self, alpaca_df, bars_df, symbols):
@@ -341,22 +339,20 @@ class TestAlpaca:
         mock_bars = mock.Mock()
         mock_bars.df = pd.DataFrame(columns=columns)
         with mock.patch.object(
-            alpaca._api, "get_bars", return_value=mock_bars
-        ):
+                alpaca._api, "get_bars", return_value=mock_bars
+            ):
             df = alpaca.query(symbols, START_DATE, END_DATE, TIMEFRAME)
             assert df.empty
-            assert set(df.columns) == set(
-                (
-                    "date",
-                    "open",
-                    "high",
-                    "low",
-                    "close",
-                    "volume",
-                    "symbol",
-                    "vwap",
-                )
-            )
+            assert set(df.columns) == {
+                "date",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "symbol",
+                "vwap",
+            }
 
     @pytest.mark.parametrize("empty_symbols", ["", []])
     @pytest.mark.usefixtures("setup_ds_cache", "mock_alpaca")
@@ -420,23 +416,21 @@ class TestAlpacaCrypto:
         mock_bars = mock.Mock()
         mock_bars.df = pd.DataFrame(columns=columns)
         with mock.patch.object(
-            crypto._api, "get_crypto_bars", return_value=mock_bars
-        ):
+                crypto._api, "get_crypto_bars", return_value=mock_bars
+            ):
             df = crypto.query(symbols, START_DATE, END_DATE, TIMEFRAME)
             assert df.empty
-            assert set(df.columns) == set(
-                (
-                    "date",
-                    "open",
-                    "high",
-                    "low",
-                    "close",
-                    "volume",
-                    "symbol",
-                    "vwap",
-                    "trade_count",
-                )
-            )
+            assert set(df.columns) == {
+                "date",
+                "open",
+                "high",
+                "low",
+                "close",
+                "volume",
+                "symbol",
+                "vwap",
+                "trade_count",
+            }
 
 
 class TestYFinance:
@@ -494,15 +488,13 @@ class TestYFinance:
         ):
             df = yf.query(symbols, START_DATE, END_DATE)
         assert df.empty
-        assert set(df.columns) == set(
-            (
-                "date",
-                "open",
-                "high",
-                "low",
-                "close",
-                "volume",
-                "symbol",
-                "adj_close",
-            )
-        )
+        assert set(df.columns) == {
+            "date",
+            "open",
+            "high",
+            "low",
+            "close",
+            "volume",
+            "symbol",
+            "adj_close",
+        }

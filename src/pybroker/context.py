@@ -106,15 +106,13 @@ class BaseContext:
         r""":class:`Iterator` of all :class:`pybroker.portfolio.Order`\ s that
         have been placed and filled.
         """
-        for order in self._portfolio.orders:
-            yield order
+        yield from self._portfolio.orders
 
     def trades(self) -> Iterator[Trade]:
         r""":class:`Iterator` of all :class:`pybroker.portfolio.Trade`\ s that
         have been completed.
         """
-        for trade in self._portfolio.trades:
-            yield trade
+        yield from self._portfolio.trades
 
     def pos(
         self,
@@ -161,11 +159,9 @@ class BaseContext:
             self._verify_pos_type(pos_type)
         if symbol is None:
             if pos_type != "short":
-                for pos in self._portfolio.long_positions.values():
-                    yield pos
+                yield from self._portfolio.long_positions.values()
             if pos_type != "long":
-                for pos in self._portfolio.short_positions.values():
-                    yield pos
+                yield from self._portfolio.short_positions.values()
         else:
             if (
                 pos_type != "short"
@@ -211,7 +207,7 @@ class BaseContext:
         return self.positions(symbol, "short")
 
     def _verify_pos_type(self, pos_type: str):
-        if pos_type != "short" and pos_type != "long":
+        if pos_type not in ["short", "long"]:
             raise ValueError(f"Unknown pos_type: {pos_type!r}.")
 
     def calc_target_shares(self, target_size: float, price: float) -> int:
@@ -409,7 +405,7 @@ class PosSizeContext(BaseContext):
         data for buy and sell signals.
         """
         if signal_type is not None:
-            if signal_type != "buy" and signal_type != "sell":
+            if signal_type not in ["buy", "sell"]:
                 raise ValueError(f"Unknown signal_type: {signal_type!r}.")
         if (
             signal_type is None or signal_type == "buy"
@@ -575,9 +571,7 @@ class ExecContext(BaseContext):
     @property
     def bars(self) -> int:
         """Number of bars of data that have completed."""
-        if not self._end_index:
-            return 0
-        return self._end_index
+        return 0 if not self._end_index else self._end_index
 
     @property
     def dt(self) -> datetime:
@@ -693,14 +687,13 @@ class ExecContext(BaseContext):
         if symbol not in self._sym_end_index:
             raise ValueError(f"Symbol {symbol!r} not found.")
         end_index = self._sym_end_index[symbol]
-        if col is None:
-            bar_data = self._col_scope.bar_data_from_data_columns(
-                symbol, end_index
-            )
-            self._foreign[symbol] = bar_data
-            return bar_data
-        else:
+        if col is not None:
             return self._col_scope.fetch(symbol, col, end_index)
+        bar_data = self._col_scope.bar_data_from_data_columns(
+            symbol, end_index
+        )
+        self._foreign[symbol] = bar_data
+        return bar_data
 
     def model(self, name: str, symbol: Optional[str] = None) -> Any:
         r"""Returns a trained model.

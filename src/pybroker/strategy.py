@@ -562,7 +562,7 @@ class BacktestMixin:
                 low = row[DataCol.LOW.value]
                 close = row[DataCol.CLOSE.value]
                 return to_decimal(round((open_ + low + high + close) / 4.0, 2))
-        if price_type == float or price_type == int or price_type == Decimal:
+        if price_type in [float, int, Decimal]:
             return to_decimal(price)  # type: ignore[arg-type]
         if callable(price):
             bar_data = col_scope.bar_data_from_data_columns(symbol, end_index)
@@ -639,28 +639,32 @@ class WalkforwardMixin:
         lookahead: {lookahead}
         train_size: {train_size}
         """
-        if train_size == 0 or train_size == 1:
-            window_length = int(len(window_dates) / windows)
+        if train_size == 0:
+            window_length = len(window_dates) // windows
             offset = len(window_dates) - window_length * windows
             for i in range(windows):
                 start = offset + i * window_length
                 end = start + window_length
-                if train_size == 0:
-                    test_idx = dates[
-                        (dates[date_col] >= window_dates[start])
-                        & (dates[date_col] <= window_dates[end - 1])
-                    ]
-                    test_idx = test_idx.index.to_numpy()
-                    yield WalkforwardWindow(np.array(tuple()), test_idx)
-                else:
-                    train_idx = dates[
-                        (dates[date_col] >= window_dates[start])
-                        & (dates[date_col] <= window_dates[end - 1])
-                    ]
-                    train_idx = train_idx.index.to_numpy()
-                    if shuffle:
-                        np.random.shuffle(train_idx)
-                    yield WalkforwardWindow(train_idx, np.array(tuple()))
+                test_idx = dates[
+                    (dates[date_col] >= window_dates[start])
+                    & (dates[date_col] <= window_dates[end - 1])
+                ]
+                test_idx = test_idx.index.to_numpy()
+                yield WalkforwardWindow(np.array(tuple()), test_idx)
+        elif train_size == 1:
+            window_length = len(window_dates) // windows
+            offset = len(window_dates) - window_length * windows
+            for i in range(windows):
+                start = offset + i * window_length
+                end = start + window_length
+                train_idx = dates[
+                    (dates[date_col] >= window_dates[start])
+                    & (dates[date_col] <= window_dates[end - 1])
+                ]
+                train_idx = train_idx.index.to_numpy()
+                if shuffle:
+                    np.random.shuffle(train_idx)
+                yield WalkforwardWindow(train_idx, np.array(tuple()))
         elif windows == 1:
             res = len(window_dates) - 1 - lookahead
             if res <= 0:
@@ -1172,7 +1176,7 @@ class Strategy(
     ) -> Optional[tuple[int]]:
         if days is None:
             return None
-        days = (days,) if type(days) == str or type(days) == Day else days
+        days = (days,) if type(days) in [str, Day] else days
         return tuple(
             sorted(
                 day.value
